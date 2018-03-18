@@ -1,9 +1,9 @@
 var markers=[];
-var markersFromServer = [];
+var marcadorConId;
 
 $(document).ready(function(){
     getMyLocation();
-
+    getMarkersFromServer();
     // Este es pata el clik del boton de la pantalla principal
     $("#btnAddMarker").click(function(){
         $("#myModal").modal();
@@ -19,7 +19,7 @@ $(document).ready(function(){
         addMarker(map,new google.maps.LatLng(lat,lng),title,content);
         // clearModalTextBox();
         $("#myModal").modal('hide');
-        printTable();
+        // printTable();
     });
 
     // Este es para el click para eliminar un marcador
@@ -45,7 +45,8 @@ function addToArray(lat, lng, title, content) {
         content,content
     }
     sendMarkerToServer(marker);
-    markers.push(marker);
+    // markers.push(marker);
+    // markers.push(marcadorConId);
 }
 
 function printTable(){
@@ -75,10 +76,10 @@ function eliminarFila(indice) {
 function sendMarkerToServer(marker){
      var obj = {
         user: "Armando",
-        latitud: marker.lat,
-        longitude: marker.lng,
-        titulo: marker.title,
-        contenido: marker.content,
+        lat: marker.lat,
+        lng: marker.lng,
+        title: marker.title,
+        content: marker.content,
         estado: "Activo"
     };
     $.ajax({
@@ -87,11 +88,39 @@ function sendMarkerToServer(marker){
         contentType: "application/json",
 		data: JSON.stringify(obj),
 		success:function(res){
-            markersFromServer=res;
+            markers.push(res);
+            printTable();
 			console.log(res);
 		},
 		error: function(err){
 			console.log(err);
 		}
     });
+}
+
+function offMarker(index){
+    $.ajax({
+        url: "http://localhost:8080/API/point",
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(markers[index]),
+        success:function(res){console.log(res)},
+        error:function(err){console.log(err)}
+    });
+}
+
+function getMarkersFromServer(){
+	$.ajax({
+        url: "http://localhost:8080/API/points/Armando",
+		type: "GET",
+		contentType: "application/json",
+		success:function(res){
+            markers = res;
+            printTable();
+			console.log(res);
+		},
+		error: function(err){
+			console.log(err);
+		}
+	});
 }
