@@ -26,9 +26,19 @@ $(document).ready(function(){
     // Este es para el click para eliminar un marcador
     $("#IDtbody").on('click','button',function(){
         var cadenaId = $(this).parent().parent().attr('id');
-        deletePin(cadenaId.substring(4,cadenaId.length));
-        eliminarFila(cadenaId.substring(4, cadenaId.length));
-        offMarker(cadenaId.substring(4, cadenaId.length));
+        var indice = cadenaId.substring(4,cadenaId.length);
+        console.log(indice);
+        console.log(markers[indice].estado);
+        markers[indice].estado="baja";
+        console.log(markers[indice].estado);
+        deletePin(indice);
+        offMarker(indice);
+        eliminarFila(indice);
+
+        // markers[cadenaId.substring(4,cadenaId.length)].estado="baja";
+        // deletePin(cadenaId.substring(4,cadenaId.length));
+        // eliminarFila(cadenaId.substring(4, cadenaId.length));
+        // offMarker(cadenaId.substring(4, cadenaId.length));
     });
 });
 
@@ -104,7 +114,7 @@ function sendMarkerToServer(marker){
 }
 
 function offMarker(index){
-    markers[index].estado="baja";
+    
     $.ajax({
         url: "http://localhost:8080/API/point",
         type: "PUT",
@@ -122,7 +132,6 @@ function getMarkersFromServer(){
 		contentType: "application/json",
 		success:function(res){
             markers = res;
-            // setMarkersOnMapFromServer();
             printTable();
 			console.log(res);
 		},
