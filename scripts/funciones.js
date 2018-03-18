@@ -1,4 +1,6 @@
 var markers=[];
+var markersFromServer = [];
+
 $(document).ready(function(){
     getMyLocation();
 
@@ -42,6 +44,7 @@ function addToArray(lat, lng, title, content) {
         title:title,
         content,content
     }
+    sendMarkerToServer(marker);
     markers.push(marker);
 }
 
@@ -67,4 +70,28 @@ function printTable(){
 function eliminarFila(indice) {
     markers.splice(indice,1);
     printTable();
+}
+
+function sendMarkerToServer(marker){
+     var obj = {
+        user: "Armando",
+        latitud: marker.lat,
+        longitude: marker.lng,
+        titulo: marker.title,
+        contenido: marker.content,
+        estado: "Activo"
+    };
+    $.ajax({
+        url: "http://localhost:8080/API/points",
+        type: "POST",
+        contentType: "application/json",
+		data: JSON.stringify(obj),
+		success:function(res){
+            markersFromServer=res;
+			console.log(res);
+		},
+		error: function(err){
+			console.log(err);
+		}
+    });
 }
