@@ -1,0 +1,21 @@
+.encabezado{
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 10px;;  
+}
+
+.formulario{
+    border: 1px solid brown;
+}
+
+.formulario, #map{
+    padding: 10px 20px;
+    margin: 20px;
+}
+
+#map{
+    border: 1px solid darkred;
+    width: 100%;
+    height: 250px;
+}
