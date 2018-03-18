@@ -37,6 +37,7 @@ function showMap(coords) {
     var title = "Your location";
     var content= "Latitude: " + coords.latitude + " Longitude: " + coords.longitude;
     //addMarker(map,latLon,title,content);
+    setMarkersOnMapFromServer();
 }
 
 /*Agregar un marcador al mapa, de acuerdo a los valores pasados como parametros */

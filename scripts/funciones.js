@@ -4,6 +4,7 @@ var marcadorConId;
 $(document).ready(function(){
     getMyLocation();
     getMarkersFromServer();
+        
     // Este es pata el clik del boton de la pantalla principal
     $("#btnAddMarker").click(function(){
         $("#myModal").modal();
@@ -27,6 +28,7 @@ $(document).ready(function(){
         var cadenaId = $(this).parent().parent().attr('id');
         deletePin(cadenaId.substring(4,cadenaId.length));
         eliminarFila(cadenaId.substring(4, cadenaId.length));
+        offMarker(cadenaId.substring(4, cadenaId.length));
     });
 });
 
@@ -52,17 +54,20 @@ function addToArray(lat, lng, title, content) {
 function printTable(){
     var cadena='';
     for(var i=0;i<markers.length;i++){
-        cadena += '<tr id="fila'+ i +'">' + 
-    '<td>' + markers[i].title+ '</td>' +
-    '<td>' + markers[i].lat + '</td>' +
-    '<td>' + markers[i].lng +'</td>' +
-    '<td>' + markers[i].content + '</td>' +
-    '<td>' +
-        '<button class="btn btn-primary">' +
-            '<span class="glyphicon glyphicon-trash">Delete</span>' +
-        '</button>' +
-    '</td>' +
-    '</tr>';
+        // if(markers[i].estado=="Activo"){
+            cadena += '<tr id="fila'+ i +'">' + 
+                    '<td>' + markers[i].title+ '</td>' +
+                    '<td>' + markers[i].lat + '</td>' +
+                    '<td>' + markers[i].lng +'</td>' +
+                    '<td>' + markers[i].content + '</td>' +
+                    '<td>' +
+                    '<button class="btn btn-primary">' +
+                        '<span class="glyphicon glyphicon-trash">Delete</span>' +
+                    '</button>' +
+                    '</td>' +
+                    '</tr>';
+        // }
+        
     }
     
     document.getElementById('IDtbody').innerHTML = cadena;
@@ -99,6 +104,7 @@ function sendMarkerToServer(marker){
 }
 
 function offMarker(index){
+    markers[index].estado="baja";
     $.ajax({
         url: "http://localhost:8080/API/point",
         type: "PUT",
@@ -111,11 +117,12 @@ function offMarker(index){
 
 function getMarkersFromServer(){
 	$.ajax({
-        url: "http://localhost:8080/API/points/Armando",
+        url: "http://localhost:8080/API/points",
 		type: "GET",
 		contentType: "application/json",
 		success:function(res){
             markers = res;
+            // setMarkersOnMapFromServer();
             printTable();
 			console.log(res);
 		},
@@ -123,4 +130,9 @@ function getMarkersFromServer(){
 			console.log(err);
 		}
 	});
+}
+
+function setMarkersOnMapFromServer(){
+    for(var i=0;i<markers.length;i++)
+    addMarker(map,new google.maps.LatLng(markers[i].lat,markers[i].lng),markers[i].title,markers[i].content);
 }
